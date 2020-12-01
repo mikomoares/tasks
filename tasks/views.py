@@ -2,9 +2,8 @@ from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from tasks.serializer import TaskSerializer
 from tasks.models import Task
-from django.views.decorators.csrf import csrf_exempt
+from rest_framework.decorators import api_view
 from rest_framework.parsers import JSONParser
-
 
 # Create your views here.
 
@@ -12,12 +11,13 @@ from rest_framework.parsers import JSONParser
 def index(request):
     return HttpResponse("Hello, world. You're at the tasks index.")
 
+@api_view(["GET"])
 def get_tasks(request):
     if request.method == 'GET':
         serializer = TaskSerializer(Task.objects.all(), many=True)
         return JsonResponse(serializer.data, safe=False)
 
-@csrf_exempt
+@api_view(["POST"])
 def post_task(request):
     if request.method == 'POST':
         data = JSONParser().parse(request)
@@ -28,8 +28,8 @@ def post_task(request):
             return JsonResponse(serializer.data, status=201)
         return JsonResponse(serializer.errors, status=400)
 
-@csrf_exempt
+@api_view(["DELETE"])
 def delete_tasks(request):
     if request.method == 'DELETE':
-        task = Task.objects.all().delete()
+        Task.objects.all().delete()
         return HttpResponse("Tasks deletada") 
