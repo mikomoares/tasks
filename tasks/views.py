@@ -20,7 +20,7 @@ def get_tasks(request):
 def delete_tasks(request):
     if request.method == 'DELETE':
         Task.objects.all().delete()
-        return JsonResponse(Task.objects.all())
+        return JsonResponse({"Status":"Tasks deletadas"}, status=200)
 
 @api_view(["POST"])
 def post_task(request):
