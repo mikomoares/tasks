@@ -7,7 +7,6 @@ from rest_framework.parsers import JSONParser
 
 # Create your views here.
 
-
 def index(request):
     return HttpResponse("Hello, world. You're at the tasks index.")
 
@@ -16,6 +15,12 @@ def get_tasks(request):
     if request.method == 'GET':
         serializer = TaskSerializer(Task.objects.all(), many=True)
         return JsonResponse(serializer.data, safe=False)
+
+@api_view(["DELETE"])
+def delete_tasks(request):
+    if request.method == 'DELETE':
+        Task.objects.all().delete()
+        return JsonResponse(Task.objects.all())
 
 @api_view(["POST"])
 def post_task(request):
@@ -27,9 +32,3 @@ def post_task(request):
             serializer.save()
             return JsonResponse(serializer.data, status=201)
         return JsonResponse(serializer.errors, status=400)
-
-@api_view(["DELETE"])
-def delete_tasks(request):
-    if request.method == 'DELETE':
-        Task.objects.all().delete()
-        return HttpResponse("Tasks deletada") 
